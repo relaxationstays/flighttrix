@@ -56,11 +56,11 @@ app.use(cookieParser());
 app.use(express.json());
 
 // app.use("/api/user", authRoute);
-app.use("/api/pnr", auth, pnrRoute);
+app.use("/api/pnr", pnrRoute);
 app.use("/api/user", usersRoute);
 app.use("/api/company", companysRoute);
 app.use("/api/booking", bookingRoute);
-app.use("/api/airport", auth, airportRoute);
+app.use("/api/airport", airportRoute);
 app.use("/api/airline", airlineRoute);
 
 // router.get("/logout", (req, res) => {
