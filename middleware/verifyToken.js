@@ -17,7 +17,7 @@ const auth = (req, res, next) => {
   // const token = req.header("access_token");
   const token = req.cookies.access_token;
   // const token = req.cookies.access_token;
-  console.log("token", req.cookies);
+  // console.log("token", req.cookies);
   if (!token) {
     return res.status(401).json({ msg: "No token, authorization denied" });
   }
