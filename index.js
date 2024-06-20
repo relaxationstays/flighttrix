@@ -12,11 +12,6 @@ import cookieParser from "cookie-parser";
 import cors from "cors";
 import auth from "./middleware/verifyToken.js";
 
-import bodyParser from "body-parser";
-
-// Start the server
-const PORT = process.env.PORT || 8800;
-
 const app = express();
 dotenv.config();
 
@@ -33,27 +28,15 @@ mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected!");
 });
 
-//middlewares
+app.use(
+  cors({
+    origin: "*",
+    credentials: true,
+  })
+);
 
-// app.use(
-//   cors({
-//     origin: "*",
-//     credentials: true,
-//   })
-// );
-
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Headers", "Content-type,Authorization");
-//   next();
-// });
-
-app.use(cors());
-
-/*========= This is the typical node server setup so we can be able to parse the requests/responses coming in and out of the server ============*/
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
-app.use(cookieParser());
 app.use(express.json());
+app.use(cookieParser());
 
 // app.use("/api/user", authRoute);
 app.use("/api/pnr", pnrRoute);
@@ -80,7 +63,7 @@ app.use((err, req, res, next) => {
   });
 });
 
-app.listen(PORT, () => {
+app.listen(8800, () => {
   connect();
-  console.log("Backend server is running!");
+  console.log("Connected to backend.");
 });

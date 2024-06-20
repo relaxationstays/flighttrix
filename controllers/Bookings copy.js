@@ -3,8 +3,6 @@ import { v4 as uuidv4 } from "uuid";
 // import Hotel from "../models/Hotel.js";
 // import { createError } from "../utils/error.js";
 
-import PNR from "../models/Pnr.js";
-
 const generateRandomNumbers = () => {
   const randomNumbers = Array.from({ length: 4 }, () =>
     Math.floor(Math.random() * 100)
@@ -12,29 +10,28 @@ const generateRandomNumbers = () => {
   return randomNumbers.join(""); // Join the numbers into a single string without commas
 };
 
+
+
+
 export const createBookings = async (req, res, next) => {
   // Generate a random 10-character reference
   const uniqueReference = generateRandomNumbers();
 
-  const { PNR: PNRID } = req.body;
+  // const PnrDta = req.body.PNR;
+  const { PNR } = req.body;
+  // Create a new booking with the request body and add the unique reference
 
   try {
-    // Find the PNR by its _id
-    const pnrDocument = await PNR.findById(PNRID);
-
-    if (!pnrDocument) {
-      return res.status(404).json({ message: "PNR not found" });
-    }
-    // Subtract one from the current Seats value
-    const updatedSeats = pnrDocument.Seats - 1;
-    // Update the document with the new Seats value
-    const updatedPNR = await PNR.findByIdAndUpdate(
-      PNRID,
-      { $set: { Seats: updatedSeats } },
+    const updatedPNR = await Bookings.findOneAndUpdate(
+      PNR,
+      { $set: { Seats:  } },
       { new: true } // Return the modified document
     );
 
-    // Create a new booking with the request body and add the unique reference
+    if (!updatedPNR) {
+      return res.status(404).json({ message: "PNR not found" });
+    }
+
     const newBookings = new Bookings({
       ...req.body,
       Reference: "A2A-" + uniqueReference,
@@ -46,6 +43,11 @@ export const createBookings = async (req, res, next) => {
     next(err);
   }
 };
+
+
+
+
+
 
 export const updateBookings = async (req, res, next) => {
   try {
