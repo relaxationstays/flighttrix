@@ -7,20 +7,49 @@ import nodemailer from "nodemailer"; // Added nodemailer import
 
 // Create a new Company
 export const createCompany = async (req, res) => {
+  console.log("data", req.body);
   try {
-    const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(req.body.password, salt);
-
-    const newCompany = new Company({
+    let companyData = {
       ...req.body,
-      Companyname: req.body.Email,
-      password: hash, // Use the hashed password
-    });
+      Companyname: req.body.Email, // Ensure you are setting this correctly
+    };
 
-    const savedCompany = await newCompany.save();
-    res.status(201).json(savedCompany);
+    // Check if _id exists in req.body to determine if it's an update or create
+    if (req.body._id) {
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(req.body.password, salt);
+      companyData = {
+        ...companyData,
+        password: hash, // Use the hashed password for update
+      };
+      const updatedCompany = await Company.findByIdAndUpdate(
+        req.body._id,
+        companyData,
+        { new: true }
+      );
+
+      if (!updatedCompany) {
+        return res.status(404).json({ error: "Company not found" });
+      }
+
+      res.status(200).json(updatedCompany);
+    } else {
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(req.body.password, salt);
+
+      companyData = {
+        ...companyData,
+        password: hash, // Use the hashed password for new company
+      };
+
+      const newCompany = new Company(companyData);
+
+      const savedCompany = await newCompany.save();
+
+      res.status(201).json(savedCompany);
+    }
   } catch (error) {
-    console.error("Error creating Company:", error);
+    console.error("Error creating/updating Company:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -82,6 +111,22 @@ export const updateCompanyById = async (req, res) => {
   }
 };
 
+export const getCompanyById = async (req, res, next) => {
+  const { id } = req.params;
+  console.log("req.params.id:", id);
+  try {
+    // Assuming you're using Mongoose, you should search by _id field
+    const company = await Company.findById(id);
+    if (!company) {
+      return res.status(404).json({ message: "company not found" });
+    }
+    res.status(200).json(company);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+};
+
 // Company.controller.js
 
 // Delete Company by ID
@@ -98,33 +143,43 @@ export const deleteCompanyById = async (req, res) => {
 
 export const login = async (req, res, next) => {
   try {
-    const Company = await Company.findOne({
-      "CompanyCredentials.Companyname": req.body.Email,
+    const CompanyData = await Company.findOne({
+      Email: req.body.Email,
     });
-    if (!Company) return next(createError(404, "Company not found!"));
+    if (!CompanyData) return next(createError(404, "CompanyData not found!"));
 
     const isPasswordCorrect = await bcrypt.compare(
       req.body.password,
-      Company.password
+      CompanyData.password
     );
-
     if (!isPasswordCorrect) {
-      return res.status(500).json({ error: "Wrong Company or Password" });
+      return res.status(401).json({ error: "Incorrect email or password" });
     }
-
     const token = jwt.sign(
-      { id: Company._id, isAdmin: Company.isAdmin },
-      process.env.JWT
+      { id: CompanyData._id, isAdmin: CompanyData.isAdmin },
+      process.env.JWT_SECRET,
+      { expiresIn: "1h" } // Optional: Token expiration time
     );
-
-    const { password, isAdmin, ...otherDetails } = Company._doc;
-    return res
+    console.log("cookies", token);
+    res
       .cookie("access_token", token, {
         httpOnly: true,
+        secure: true,
+        sameSite: "none",
       })
       .status(200)
-      .json({ details: { ...otherDetails }, isAdmin });
+      .send({
+        token,
+        userId: CompanyData._id,
+        details: {
+          id: Company._id,
+          isAdmin: Company.isAdmin,
+          Email: Company.Email,
+          // Add other necessary details here
+        },
+      });
   } catch (err) {
+    console.error(err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

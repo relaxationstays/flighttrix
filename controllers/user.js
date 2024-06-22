@@ -115,9 +115,7 @@ export const login = async (req, res, next) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" } // Optional: Token expiration time
     );
-
     console.log("cookies", token);
-
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -127,6 +125,7 @@ export const login = async (req, res, next) => {
       .status(200)
       .send({
         token,
+        userId: user._id,
         details: {
           id: user._id,
           isAdmin: user.isAdmin,
@@ -135,22 +134,7 @@ export const login = async (req, res, next) => {
         },
       });
 
-    // res
-    //   .cookie("access_token", token, {
-    //     // withCredentials: true,
-    //     secure: true, // Cookie will only be sent over HTTPS
-    //     httpOnly: false,
-    //     sameSite: "none",
-    //   })
-    //   .json({
-    //     token,
-    //     details: {
-    //       id: user._id,
-    //       isAdmin: user.isAdmin,
-    //       Email: user.Email,
-    //       // Add other necessary details here
-    //     },
-    //   });
+  
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal Server Error" });

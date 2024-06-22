@@ -1,5 +1,7 @@
 import Bookings from "../models/Bookings.js";
 import { v4 as uuidv4 } from "uuid";
+import Company from "../models/Company.js";
+
 // import Hotel from "../models/Hotel.js";
 // import { createError } from "../utils/error.js";
 
@@ -15,13 +17,11 @@ const generateRandomNumbers = () => {
 export const createBookings = async (req, res, next) => {
   // Generate a random 10-character reference
   const uniqueReference = generateRandomNumbers();
-
   const { PNR: PNRID } = req.body;
-
+  const { issuer: issuer } = req.body;
   try {
     // Find the PNR by its _id
     const pnrDocument = await PNR.findById(PNRID);
-
     if (!pnrDocument) {
       return res.status(404).json({ message: "PNR not found" });
     }
@@ -34,12 +34,24 @@ export const createBookings = async (req, res, next) => {
       { new: true } // Return the modified document
     );
 
+    const CompanyDocument = await Company.findById(issuer);
+    if (!CompanyDocument) {
+      return res.status(404).json({ message: "Company not found" });
+    }
+    // Subtract one from the current Seats value
+    const BalanceUpdate = CompanyDocument.Balance - pnrDocument.price;
+    // Update the document with the new Seats value
+    const updatedComapny = await Company.findByIdAndUpdate(
+      issuer,
+      { $set: { Balance: BalanceUpdate } },
+      { new: true } // Return the modified document
+    );
+
     // Create a new booking with the request body and add the unique reference
     const newBookings = new Bookings({
       ...req.body,
       Reference: "A2A-" + uniqueReference,
     });
-
     const savedBookings = await newBookings.save();
     res.status(200).json(savedBookings);
   } catch (err) {

@@ -14,36 +14,36 @@ const Companychema = new mongoose.Schema(
     Balance: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     contactPerson: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     Address: {
       type: String,
       required: true,
-      unique: true,
+      // unique: true,
     },
     Website: {
       type: String,
-      required: true,
+      // required: true,
     },
     Logo: {
       type: String,
-      required: true,
+      // required: true,
     },
     Nationality: {
       type: String,
     },
     City: {
       type: String,
-      required: true,
+      // required: true,
     },
     Zipcode: {
       type: String,
-      required: true,
+      // required: true,
     },
 
     Telephone: {
@@ -68,7 +68,7 @@ const Companychema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
-    Status: {
+    AciveStatus: {
       type: Boolean,
       default: false,
     },

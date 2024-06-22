@@ -43,6 +43,11 @@ const BookingSchema = new mongoose.Schema(
       type: String,
       // default: false,
     },
+    issuer: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      required: true,
+    },
     PNR: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "PNRModel",
