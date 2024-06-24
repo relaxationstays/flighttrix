@@ -65,9 +65,7 @@ export const getAllUsers = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 // user.controller.js
-
 // Update user by ID
 export const updateUserById = async (req, res) => {
   const { id } = req.params;

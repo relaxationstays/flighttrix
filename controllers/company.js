@@ -85,9 +85,20 @@ export const emailPortal = async (req, res) => {
 // Company.controller.js
 
 // Get all Companys
+// export const getAllCompanys = async (req, res) => {
+//   try {
+//     const Companys = await Company.find();
+//     res.status(200).json(Companys);
+//   } catch (error) {
+//     console.error("Error fetching Companys:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 export const getAllCompanys = async (req, res) => {
   try {
-    const Companys = await Company.find();
+    // Fetch all companies but exclude the password field
+    const Companys = await Company.find().select("-password");
     res.status(200).json(Companys);
   } catch (error) {
     console.error("Error fetching Companys:", error);

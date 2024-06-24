@@ -1,11 +1,12 @@
 import express from "express";
 import {
   createCompany,
-  getAllCompanys,
+  // getAllCompanys,
   updateCompanyById,
   deleteCompanyById,
   getCompanyById,
   login,
+  getAllCompanys,
   emailPortal,
 } from "../controllers/company.js";
 const router = express.Router();
@@ -13,6 +14,7 @@ const router = express.Router();
 //CREATE
 router.post("/", createCompany);
 router.get("/", getAllCompanys);
+router.get("/getAll", getAllCompanys);
 router.post("/login", login);
 router.get("/:id", getCompanyById);
 router.post("/updateCompanyById", updateCompanyById);
