@@ -158,7 +158,7 @@ export const login = async (req, res, next) => {
     const token = jwt.sign(
       { id: CompanyData._id, isAdmin: CompanyData.isAdmin },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" } // Optional: Token expiration time
+      { expiresIn: "3h" } // Optional: Token expiration time
     );
     console.log("cookies", token);
     res
