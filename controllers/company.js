@@ -83,7 +83,6 @@ export const emailPortal = async (req, res) => {
 };
 
 // Company.controller.js
-
 // Get all Companys
 // export const getAllCompanys = async (req, res) => {
 //   try {
@@ -154,43 +153,164 @@ export const deleteCompanyById = async (req, res) => {
 
 export const login = async (req, res, next) => {
   try {
-    const CompanyData = await Company.findOne({
-      Email: req.body.Email,
-    });
-    if (!CompanyData) return next(createError(404, "CompanyData not found!"));
+    const companyData = await Company.findOne({ Email: req.body.Email });
 
-    const isPasswordCorrect = await bcrypt.compare(
-      req.body.password,
-      CompanyData.password
-    );
-    if (!isPasswordCorrect) {
-      return res.status(401).json({ error: "Incorrect email or password" });
+    if (!companyData) {
+      return next(createError(404, "Company not found!"));
     }
-    const token = jwt.sign(
-      { id: CompanyData._id, isAdmin: CompanyData.isAdmin },
-      process.env.JWT_SECRET,
-      { expiresIn: "3h" } // Optional: Token expiration time
-    );
-    console.log("cookies", token);
-    res
-      .cookie("access_token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-      })
-      .status(200)
-      .send({
-        token,
-        userId: CompanyData._id,
-        details: {
-          id: Company._id,
-          isAdmin: Company.isAdmin,
-          Email: Company.Email,
-          // Add other necessary details here
-        },
-      });
+
+    if (companyData.AciveStatus) {
+      const isPasswordCorrect = await bcrypt.compare(
+        req.body.password,
+        companyData.password
+      );
+
+      if (!isPasswordCorrect) {
+        return res.status(401).json({ error: "Incorrect email or password" });
+      }
+
+      const token = jwt.sign(
+        { id: companyData._id, isAdmin: companyData.isAdmin },
+        process.env.JWT_SECRET,
+        { expiresIn: "3h" }
+      );
+
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
+        .status(200)
+        .send({
+          token,
+          userId: companyData._id,
+          details: {
+            id: companyData._id,
+            isAdmin: companyData.isAdmin,
+            Email: companyData.Email,
+            // Add other necessary details here
+          },
+        });
+    } else {
+      const salt = bcrypt.genSaltSync(10);
+      const hash = bcrypt.hashSync(req.body.password, salt);
+      companyData.password = hash;
+      companyData.AciveStatus = true;
+      const updatedCompany = await companyData.save();
+      const token = jwt.sign(
+        { id: updatedCompany._id, isAdmin: updatedCompany.isAdmin },
+        process.env.JWT_SECRET,
+        { expiresIn: "3h" }
+      );
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
+        .status(200)
+        .send({
+          token,
+          userId: updatedCompany._id,
+          details: {
+            id: updatedCompany._id,
+            isAdmin: updatedCompany.isAdmin,
+            Email: updatedCompany.Email,
+            // Add other necessary details here
+          },
+        });
+    }
   } catch (err) {
     console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+// function generateRandomNumbers(min, max) {
+//   const numbers = [];
+//   for (let i = 0; i < 5; i++) {
+//     const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+//     numbers.push(randomNumber);
+//   }
+//   // return numbers;
+//   return numbers.join(" ");
+// }
+export const setPass = async (req, res, next) => {
+  console.log("163803", req.body.otp);
+  console.log("setpasstesting");
+  const generateRandomNumber = () => {
+    const min = 100000; // Minimum 6-digit number
+    const max = 999999; // Maximum 6-digit number
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  };
+  try {
+    const companyData = await Company.findOne({ Email: req.body.Email });
+    // if (companyData.AciveStatus) {
+    if (companyData.otp == 123) {
+      let number = generateRandomNumber();
+      companyData.otp = number;
+      // companyData.AciveStatus = true;
+      const updatedCompany = await companyData.save();
+
+      const transporter = nodemailer.createTransport({
+        host: "cpanel-just2091.justhost.com", // Check your cPanel for SMTP server settings
+        port: 465,
+        secure: true, // Use SSL
+        auth: {
+          Company: "inquries@relaxationstays.com", // Your cPanel email address
+          pass: "Cozy25@@11", // Your cPanel email password
+        },
+      });
+      // Define email options
+      let mailOptions = {
+        from: "inquries@relaxationstays.com", // Sender email address
+        to: req.body.Email, // Recipient email address
+        subject: "Password Recovery Otp", // Subject line
+        text: `New Lead.\n Your Otp is : ${number} `, // Plain text body
+      };
+      // Send email
+      const info = await transporter.sendMail(mailOptions);
+      console.log("Otp sent successfully:", info.response);
+      // res.send("Email sent successfully");
+      res.status(200).send("success");
+    } else {
+      if (req.body.otp == companyData.otp) {
+        // companyData.otp = 5265362536;
+        companyData.AciveStatus = false;
+        const updatedCompany = await companyData.save();
+        const token = jwt.sign(
+          { id: updatedCompany._id, isAdmin: updatedCompany.isAdmin },
+          process.env.JWT_SECRET,
+          { expiresIn: "3h" }
+        );
+        console.log("Suucess Otp");
+        res.status(200).send("successotp");
+      } else {
+        console.log("Error Otp");
+        res.status(500).send("error");
+      }
+    }
+    // }
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+export const checklogin = async (req, res, next) => {
+  try {
+    const companyData = await Company.findOne({
+      Email: req.body.Email,
+    });
+    if (!companyData) {
+      return next(createError(404, "Email not found!"));
+    }
+    // console.log("true");
+    res.status(200).json({ ActiveStatus: companyData.AciveStatus });
+  } catch (err) {
+    console.log("false");
+    // console.error(err);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };

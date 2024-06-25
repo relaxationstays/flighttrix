@@ -72,6 +72,10 @@ const Companychema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    otp: {
+      type: Number,
+      default: 123,
+    },
   },
   { timestamps: true }
 );

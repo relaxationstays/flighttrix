@@ -7,6 +7,8 @@ import {
   getCompanyById,
   login,
   getAllCompanys,
+  checklogin,
+  setPass,
   emailPortal,
 } from "../controllers/company.js";
 const router = express.Router();
@@ -16,6 +18,8 @@ router.post("/", createCompany);
 router.get("/", getAllCompanys);
 router.get("/getAll", getAllCompanys);
 router.post("/login", login);
+router.post("/checklogin", checklogin);
+router.post("/setPass", setPass);
 router.get("/:id", getCompanyById);
 router.post("/updateCompanyById", updateCompanyById);
 router.post("/delete", deleteCompanyById);
