@@ -258,13 +258,13 @@ export const setPass = async (req, res, next) => {
         port: 465,
         secure: true, // Use SSL
         auth: {
-          Company: "inquries@relaxationstays.com", // Your cPanel email address
-          pass: "Cozy25@@11", // Your cPanel email password
+          Company: "noreply@flightrix.com", // Your cPanel email address
+          pass: "flightriX@2024",
         },
       });
       // Define email options
       let mailOptions = {
-        from: "inquries@relaxationstays.com", // Sender email address
+        from: "noreply@flightrix.com", // Sender email address
         to: req.body.Email, // Recipient email address
         subject: "Password Recovery Otp", // Subject line
         text: `New Lead.\n Your Otp is : ${number} `, // Plain text body
