@@ -202,7 +202,7 @@ export const login = async (req, res, next) => {
 };
 
 export const setPass = async (req, res, next) => {
-  console.log("163803", req.body.otp);
+  console.log("reset", req.body.reset);
   const generateRandomNumber = () => {
     const min = 100000; // Minimum 6-digit number
     const max = 999999; // Maximum 6-digit number
@@ -225,7 +225,8 @@ export const setPass = async (req, res, next) => {
   try {
     const companyData = await Company.findOne({ Email: req.body.Email });
     // if (companyData.AciveStatus) {
-    if (companyData.otp == 123) {
+    // if (companyData.otp == 123) {
+    if (req.body.reset == true) {
       let number = generateRandomNumber();
       companyData.otp = number;
       // Send email with new OTP
@@ -243,7 +244,8 @@ export const setPass = async (req, res, next) => {
         console.log("Email sent: ", info.response);
         res.status(200).send("success");
       });
-      // companyData.AciveStatus = true;
+      companyData.AciveStatus = true;
+      // delete res.body.password;
       const updatedCompany = await companyData.save();
       res.status(200).send("success");
     } else {
@@ -260,7 +262,7 @@ export const setPass = async (req, res, next) => {
         res.status(200).send("successotp");
       } else {
         console.log("Error Otp");
-        res.status(500).send("error");
+        res.status(501).send("error");
       }
     }
     // }
