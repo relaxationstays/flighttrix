@@ -209,35 +209,39 @@ export const setPass = async (req, res, next) => {
     const max = 999999; // Maximum 6-digit number
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
+
+  // Set up Nodemailer
+  const transporter = nodemailer.createTransport({
+    host: "cpanel-just2091.justhost.com",
+    port: 465,
+    secure: false, // or 'STARTTLS'
+    auth: {
+      user: "noreply@flightrix.com",
+      pass: "flixtrixpssxx",
+    },
+  });
+
   try {
     const companyData = await Company.findOne({ Email: req.body.Email });
     // if (companyData.AciveStatus) {
     if (companyData.otp == 123) {
       let number = generateRandomNumber();
       companyData.otp = number;
+      // Send email with new OTP
+      const mailOptions = {
+        from: "noreply@flightrix.com",
+        to: req.body.Email,
+        subject: "New OTP for Password Reset",
+        text: `Your new OTP is ${number}. Please use this to reset your password.`,
+      };
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          return console.log(error);
+        }
+        console.log("Email sent: ");
+      });
       // companyData.AciveStatus = true;
       const updatedCompany = await companyData.save();
-
-      // const transporter = nodemailer.createTransport({
-      //   host: "cpanel-just2091.justhost.com", // Check your cPanel for SMTP server settings
-      //   port: 465,
-      //   secure: true, // Use SSL
-      //   auth: {
-      //     Company: "noreply@flightrix.com", // Your cPanel email address
-      //     pass: "flightriX@2024",
-      //   },
-      // });
-      // // Define email options
-      // let mailOptions = {
-      //   from: "noreply@flightrix.com", // Sender email address
-      //   to: req.body.Email, // Recipient email address
-      //   subject: "Password Recovery Otp", // Subject line
-      //   text: `New Lead.\n Your Otp is : ${number} `, // Plain text body
-      // };
-      // // Send email
-      // const info = await transporter.sendMail(mailOptions);
-      // console.log("Otp sent successfully:", info.response);
-      // res.send("Email sent successfully");
       res.status(200).send("success");
     } else {
       if (req.body.otp == companyData.otp) {
