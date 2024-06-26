@@ -154,42 +154,76 @@ export const deleteCompanyById = async (req, res) => {
 export const login = async (req, res, next) => {
   try {
     const companyData = await Company.findOne({ Email: req.body.Email });
+
     if (!companyData) {
       return next(createError(404, "Company not found!"));
     }
+
     if (companyData.AciveStatus) {
       const isPasswordCorrect = await bcrypt.compare(
         req.body.password,
         companyData.password
       );
+
       if (!isPasswordCorrect) {
         return res.status(401).json({ error: "Incorrect email or password" });
       }
+
       const token = jwt.sign(
         { id: companyData._id, isAdmin: companyData.isAdmin },
         process.env.JWT_SECRET,
         { expiresIn: "3h" }
       );
-      res.cookie("access_token", token, {
-        httpOnly: false,
-        // sameSite: "Lax",
-      });
-      // res.cookie("userid", companyData._id);
-      res.cookie("userid", String(companyData._id), {
-        httpOnly: false,
-        // sameSite: "Lax",
-      });
-      // res.status(200).send("success");
-      res.status(200).send({
-        userId: companyData._id,
-      });
+
+      // res.cookie("access_token", token, {
+      //   httpOnly: true,
+      //   secure: true,
+      //   sameSite: "none",
+      // });
+
+      res.cookie("access_token", token);
+      res.cookie("userid", companyData._id);
+      // res.cookie("access_token", companyData._id);
+
+      // res.status(200).send({
+      //   token,
+      //   userId: companyData._id,
+      //   details: {
+      //     id: companyData._id,
+      //     isAdmin: companyData.isAdmin,
+      //     Email: companyData.Email,
+      //     // Add other necessary details here
+      //   },
+      // });
+      res.status(200).send("success");
     } else {
       const salt = bcrypt.genSaltSync(10);
       const hash = bcrypt.hashSync(req.body.password, salt);
       companyData.password = hash;
       companyData.AciveStatus = true;
       const updatedCompany = await companyData.save();
-      res.status(200).send("success");
+      const token = jwt.sign(
+        { id: updatedCompany._id, isAdmin: updatedCompany.isAdmin },
+        process.env.JWT_SECRET,
+        { expiresIn: "3h" }
+      );
+      res
+        .cookie("access_token", token, {
+          httpOnly: true,
+          secure: true,
+          sameSite: "none",
+        })
+        .status(200)
+        .send({
+          token,
+          userId: updatedCompany._id,
+          details: {
+            id: updatedCompany._id,
+            isAdmin: updatedCompany.isAdmin,
+            Email: updatedCompany.Email,
+            // Add other necessary details here
+          },
+        });
     }
   } catch (err) {
     console.error(err);
@@ -197,6 +231,15 @@ export const login = async (req, res, next) => {
   }
 };
 
+// function generateRandomNumbers(min, max) {
+//   const numbers = [];
+//   for (let i = 0; i < 5; i++) {
+//     const randomNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+//     numbers.push(randomNumber);
+//   }
+//   // return numbers;
+//   return numbers.join(" ");
+// }
 export const setPass = async (req, res, next) => {
   console.log("163803", req.body.otp);
   console.log("setpasstesting");

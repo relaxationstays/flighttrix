@@ -28,23 +28,26 @@ mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected!");
 });
 
+app.use(cookieParser());
+app.use(express.json());
 app.use(
   cors({
-    origin: "*",
+    origin: [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "https://flightrix.com/report",
+    ],
     credentials: true,
   })
 );
 
-app.use(express.json());
-app.use(cookieParser());
-
 // app.use("/api/user", authRoute);
-app.use("/api/pnr", pnrRoute);
+app.use("/api/pnr", auth, pnrRoute);
 app.use("/api/user", usersRoute);
 app.use("/api/company", companysRoute);
-app.use("/api/booking", bookingRoute);
-app.use("/api/airport", airportRoute);
-app.use("/api/airline", airlineRoute);
+app.use("/api/booking", auth, bookingRoute);
+app.use("/api/airport", auth, airportRoute);
+app.use("/api/airline", auth, airlineRoute);
 
 // router.get("/logout", (req, res) => {
 //   res.clearCookie("token");
