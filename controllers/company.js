@@ -172,11 +172,15 @@ export const login = async (req, res, next) => {
       );
       res.cookie("access_token", token, {
         httpOnly: true,
+        sameSite: "None", // Only use with HTTPS
+        secure: true, // Only use with HTTPS
         // sameSite: "Lax",
       });
       // res.cookie("userid", companyData._id);
       res.cookie("userid", String(companyData._id), {
         httpOnly: true,
+        sameSite: "None", // Only use with HTTPS
+        secure: true, // Only use with HTTPS
         // sameSite: "Lax",
       });
       // res.status(200).send("success");
