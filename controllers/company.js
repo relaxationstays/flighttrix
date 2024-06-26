@@ -203,23 +203,24 @@ export const login = async (req, res, next) => {
 
 export const setPass = async (req, res, next) => {
   console.log("163803", req.body.otp);
-  console.log("setpasstesting");
   const generateRandomNumber = () => {
     const min = 100000; // Minimum 6-digit number
     const max = 999999; // Maximum 6-digit number
     return Math.floor(Math.random() * (max - min + 1)) + min;
   };
-
   // Set up Nodemailer
   const transporter = nodemailer.createTransport({
     host: "cpanel-just2091.justhost.com",
+    // cpanel-just2091.justhost.com
     port: 465,
-    secure: false, // or 'STARTTLS'
+    // secure: false, // or 'STARTTLS'
+    secure: true, // Use SSL
     auth: {
       user: "noreply@flightrix.com",
       pass: "flixtrixpssxx",
     },
   });
+  console.log("set now mail");
 
   try {
     const companyData = await Company.findOne({ Email: req.body.Email });
@@ -236,9 +237,11 @@ export const setPass = async (req, res, next) => {
       };
       transporter.sendMail(mailOptions, (error, info) => {
         if (error) {
-          return console.log(error);
+          console.error("Error sending email:", error);
+          return res.status(500).json({ error: "Failed to send email" });
         }
-        console.log("Email sent: ");
+        console.log("Email sent: ", info.response);
+        res.status(200).send("success");
       });
       // companyData.AciveStatus = true;
       const updatedCompany = await companyData.save();
