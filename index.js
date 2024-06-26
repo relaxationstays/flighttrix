@@ -29,7 +29,6 @@ mongoose.connection.on("disconnected", () => {
 });
 
 app.use(cookieParser());
-app.use(express.json());
 app.use(
   cors({
     origin: [
@@ -37,9 +36,11 @@ app.use(
       "http://localhost:3001",
       "https://flightrix.com",
     ],
+    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
   })
 );
+app.use(express.json());
 
 // app.use("/api/user", authRoute);
 app.use("/api/pnr", auth, pnrRoute);

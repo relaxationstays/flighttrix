@@ -171,12 +171,12 @@ export const login = async (req, res, next) => {
         { expiresIn: "3h" }
       );
       res.cookie("access_token", token, {
-        httpOnly: false,
+        httpOnly: true,
         // sameSite: "Lax",
       });
       // res.cookie("userid", companyData._id);
       res.cookie("userid", String(companyData._id), {
-        httpOnly: false,
+        httpOnly: true,
         // sameSite: "Lax",
       });
       // res.status(200).send("success");
