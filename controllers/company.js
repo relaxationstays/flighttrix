@@ -44,10 +44,9 @@ export const createCompany = async (req, res) => {
       res.status(200).json(updatedCompany);
     } else {
       const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(req.body.password, salt);
+      // const hash = bcrypt.hashSync(req.body.password, salt);
       companyData = {
         ...companyData,
-        password: hash, // Use the hashed password for new company
       };
       const newCompany = new Company(companyData);
       const savedCompany = await newCompany.save();
