@@ -29,6 +29,14 @@ const PNRSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    Code1: {
+      type: String,
+      required: true,
+    },
+    Code2: {
+      type: String,
+      required: true,
+    },
     Seats: {
       type: String,
       required: true,
@@ -56,3 +64,4 @@ const PNRSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("PNRModel", PNRSchema);
+ 

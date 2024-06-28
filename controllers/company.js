@@ -7,20 +7,32 @@ import nodemailer from "nodemailer"; // Added nodemailer import
 
 // Create a new Company
 export const createCompany = async (req, res) => {
-  console.log("data", req.body);
+  // console.log("data", req.body);
+  const transporter = nodemailer.createTransport({
+    host: "cpanel-just2091.justhost.com",
+    // cpanel-just2091.justhost.com
+    port: 465,
+    // secure: false, // or 'STARTTLS'
+    secure: true, // Use SSL
+    auth: {
+      user: "noreply@flightrix.com",
+      pass: "flixtrixpssxx",
+    },
+  });
+  console.log("set now mail");
   try {
     let companyData = {
       ...req.body,
-      Companyname: req.body.Email, // Ensure you are setting this correctly
+      Companyname: req.body.Email.toLowerCase(), // Ensure you are setting this correctly
     };
 
     // Check if _id exists in req.body to determine if it's an update or create
     if (req.body._id) {
       const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(req.body.password, salt);
+      // const hash = bcrypt.hashSync(req.body.password, salt);
       companyData = {
         ...companyData,
-        password: hash, // Use the hashed password for update
+        // password: hash, // Use the hashed password for update
       };
       const updatedCompany = await Company.findByIdAndUpdate(
         req.body._id,
@@ -35,16 +47,41 @@ export const createCompany = async (req, res) => {
       res.status(200).json(updatedCompany);
     } else {
       const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(req.body.password, salt);
-
+      // const hash = bcrypt.hashSync(req.body.password, salt);
       companyData = {
         ...companyData,
-        password: hash, // Use the hashed password for new company
+        // password: hash, // Use the hashed password for new company
       };
-
       const newCompany = new Company(companyData);
-
       const savedCompany = await newCompany.save();
+      const mailOptions = {
+        from: "noreply@flightrix.com",
+        to: req.body.Email,
+        subject: "Account Verification",
+        html: `
+    <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+      <div style="text-align: center; margin-bottom: 20px;">
+        <img src="https://flightrix.com/static/media/flightrixsvg.1702041e614b3caf6221.png" alt="Flightrix Logo" style="height: 60px;">
+      </div>
+      <h2 style="color: #444;">Account Verification</h2>
+      <p>Hello,</p>
+      <p>You recently requested to create your Flightrix account. Please click the link below to verify your account:</p>
+      <p>
+        <a href="https://www.flightrix.com/login" style="color: #1a73e8; text-decoration: none;">Verify your account</a>
+      </p>
+      <p>If you did not request this, please ignore this email.</p>
+      <p>Thank you,<br>The Flightrix Team</p>
+    </div>
+  `,
+      };
+      transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+          console.error("Error sending email:", error);
+          return res.status(500).json({ error: "Failed to send email" });
+        }
+        console.log("Email sent: ", info.response);
+        res.status(200).send("success");
+      });
 
       res.status(201).json(savedCompany);
     }
@@ -54,6 +91,19 @@ export const createCompany = async (req, res) => {
   }
 };
 // Create a new Company
+
+// Company.controller.js
+// Get all Companys
+// export const getAllCompanys = async (req, res) => {
+//   try {
+//     const Companys = await Company.find();
+//     res.status(200).json(Companys);
+//   } catch (error) {
+//     console.error("Error fetching Companys:", error);
+//     res.status(500).json({ error: "Internal server error" });
+//   }
+// };
+
 export const emailPortal = async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -81,18 +131,6 @@ export const emailPortal = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-// Company.controller.js
-// Get all Companys
-// export const getAllCompanys = async (req, res) => {
-//   try {
-//     const Companys = await Company.find();
-//     res.status(200).json(Companys);
-//   } catch (error) {
-//     console.error("Error fetching Companys:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 
 export const getAllCompanys = async (req, res) => {
   try {
@@ -136,6 +174,13 @@ export const getCompanyById = async (req, res, next) => {
     next(err);
   }
 };
+
+// Account Verification
+// Dear Mr. George Okurut,
+
+// You recently requested to verify your Best Option Travels account.
+
+// Click here to verify your email
 
 // Company.controller.js
 

@@ -4,7 +4,7 @@ const Companychema = new mongoose.Schema(
     AgencyName: {
       type: String,
       required: true,
-      unique: true,
+      unique: false,
     },
     AccountNo: {
       type: String,
@@ -45,7 +45,6 @@ const Companychema = new mongoose.Schema(
       type: String,
       // required: true,
     },
-
     Telephone: {
       type: String,
       default: false,
@@ -58,7 +57,7 @@ const Companychema = new mongoose.Schema(
     Whatsapp: {
       type: String,
       default: false,
-      unique: true,
+      unique: false,
     },
     password: {
       type: String,
