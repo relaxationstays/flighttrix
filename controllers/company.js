@@ -56,22 +56,22 @@ export const createCompany = async (req, res) => {
         from: "noreply@flightrix.com",
         to: req.body.Email,
         subject: "Account Verification",
-        text: `Your new OTP is ${number}. Please use this to reset your password.`,
-        // html: `
-        //   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        //     <div style="text-align: center; margin-bottom: 20px;">
-        //       <img src="https://flightrix.com/static/media/flightrixsvg.1702041e614b3caf6221.png" alt="Flightrix Logo" style="height: 60px;">
-        //     </div>
-        //     <h2 style="color: #444;">Account Verification</h2>
-        //     <p>Hello,</p>
-        //     <p>You recently requested to create your Flightrix account. Please click the link below to verify your account:</p>
-        //     <p>
-        //       <a href="https://www.flightrix.com/login" style="color: #1a73e8; text-decoration: none;">Verify your account</a>
-        //     </p>
-        //     <p>If you did not request this, please ignore this email.</p>
-        //     <p>Thank you,<br>The Flightrix Team</p>
-        //   </div>
-        // `,
+        // text: `Your new OTP is ${number}. Please use this to reset your password.`,
+        html: `
+          <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+            <div style="text-align: center; margin-bottom: 20px;">
+              <img src="https://flightrix.com/static/media/flightrixsvg.1702041e614b3caf6221.png" alt="Flightrix Logo" style="height: 60px;">
+            </div>
+            <h2 style="color: #444;">Account Verification</h2>
+            <p>Hello,</p>
+            <p>You recently requested to create your Flightrix account. Please click the link below to verify your account:</p>
+            <p>
+              <a href="https://www.flightrix.com/login" style="color: #1a73e8; text-decoration: none;">Verify your account</a>
+            </p>
+            <p>If you did not request this, please ignore this email.</p>
+            <p>Thank you,<br>The Flightrix Team</p>
+          </div>
+        `,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
