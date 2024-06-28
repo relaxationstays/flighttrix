@@ -35,6 +35,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "https://flightrix.com",
+      "https://admin.flightrix.com",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
