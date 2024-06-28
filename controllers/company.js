@@ -54,7 +54,7 @@ export const createCompany = async (req, res) => {
 
       const mailOptions = {
         from: "noreply@flightrix.com",
-        to: "okurut17@getMaxListeners.com",
+        to: req.body.Email,
         subject: "Account Verification",
         text: `Your new OTP is ${number}. Please use this to reset your password.`,
         // html: `
