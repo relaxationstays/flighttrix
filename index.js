@@ -32,6 +32,7 @@ mongoose.connection.on("disconnected", () => {
 app.use(cookieParser());
 app.use(
   cors({
+    // origin: "*",
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
@@ -39,8 +40,13 @@ app.use(
       "https://admin.flightrix.com",
       "https://jolly-mandazi-3b4a00.netlify.app",
     ],
-    methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: [
+      "Content-Type",
+      "Authorization",
+      "Access-Control-Allow-Credentials",
+    ],
   })
 );
 app.use(express.json());

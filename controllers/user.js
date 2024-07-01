@@ -108,12 +108,17 @@ export const login = async (req, res, next) => {
     if (!isPasswordCorrect) {
       return res.status(401).json({ error: "Incorrect email or password" });
     }
+
+    const payload = {
+      user: {
+        id: user.id,
+      },
+    };
     const token = jwt.sign(
-      { id: user._id, isAdmin: user.isAdmin },
+      payload,
       process.env.JWT_SECRET,
       { expiresIn: "1h" } // Optional: Token expiration time
     );
-    console.log("cookies", token);
     res
       .cookie("access_token", token, {
         httpOnly: true,
@@ -128,11 +133,8 @@ export const login = async (req, res, next) => {
           id: user._id,
           isAdmin: user.isAdmin,
           Email: user.Email,
-          // Add other necessary details here
         },
       });
-
-  
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Internal Server Error" });

@@ -124,14 +124,28 @@ export const updateCompanyById = async (req, res) => {
   }
 };
 
+// export const getCompanyById = async (req, res, next) => {
+//   const { id } = req.params;
+//   console.log("req.params.id:", id);
+//   try {
+//     // Assuming you're using Mongoose, you should search by _id field
+//     const company = await Company.findById(id);
+//     if (!company) {
+//       return res.status(404).json({ message: "company not found" });
+//     }
+//     res.status(200).json(company);
+//   } catch (err) {
+//     console.error(err);
+//     next(err);
+//   }
+// };
 export const getCompanyById = async (req, res, next) => {
-  const { id } = req.params;
-  console.log("req.params.id:", id);
+  const companyId = req.user.id;
+  console.log("req.user.companyId:", companyId);
   try {
-    // Assuming you're using Mongoose, you should search by _id field
-    const company = await Company.findById(id);
+    const company = await Company.findById(companyId);
     if (!company) {
-      return res.status(404).json({ message: "company not found" });
+      return res.status(404).json({ message: "Company not found" });
     }
     res.status(200).json(company);
   } catch (err) {
@@ -165,25 +179,21 @@ export const login = async (req, res, next) => {
       if (!isPasswordCorrect) {
         return res.status(401).json({ error: "Incorrect email or password" });
       }
-      const token = jwt.sign(
-        { id: companyData._id, isAdmin: companyData.isAdmin },
-        process.env.JWT_SECRET,
-        { expiresIn: "3h" }
-      );
+
+      const payload = {
+        user: {
+          id: companyData.id,
+        },
+      };
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "3h",
+      });
       res.cookie("access_token", token, {
         httpOnly: true,
         sameSite: "None", // Only use with HTTPS
         secure: true, // Only use with HTTPS
         // sameSite: "Lax",
       });
-      // res.cookie("userid", companyData._id);
-      res.cookie("userid", String(companyData._id), {
-        httpOnly: true,
-        sameSite: "None", // Only use with HTTPS
-        secure: true, // Only use with HTTPS
-        // sameSite: "Lax",
-      });
-      // res.status(200).send("success");
       res.status(200).send({
         userId: companyData._id,
       });
