@@ -37,6 +37,7 @@ app.use(
       "http://localhost:3001",
       "https://flightrix.com",
       "https://admin.flightrix.com",
+      "https://jolly-mandazi-3b4a00.netlify.app",
     ],
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true,
@@ -52,14 +53,6 @@ app.use("/api/booking", auth, bookingRoute);
 app.use("/api/airport", auth, airportRoute);
 app.use("/api/airline", auth, airlineRoute);
 app.use("/api/payment", PaymentRoute);
-// app.use("/api/payment", auth, PaymentRoute);
-
-// router.get("/logout", (req, res) => {
-//   res.clearCookie("token");
-//   res.json({ message: "Logged out" });
-// });
-// app.use("/api/", roomsRoute);
-
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong!";
