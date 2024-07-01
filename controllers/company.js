@@ -1,11 +1,7 @@
-// Company.controller.js
 import Company from "../models/Company.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer"; // Added nodemailer import
-// import createError from "http-errors"; // Added createError import
-
-// Create a new Company
 export const createCompany = async (req, res) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -56,21 +52,6 @@ export const createCompany = async (req, res) => {
         to: req.body.Email,
         subject: "Account Verification",
         text: `Your account is created. \n\n\nFollow link to login. \n\n\nhttps://www.flightrix.com/login`,
-        // html: `
-        //   <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        //     <div style="margin-bottom: 20px;">
-        //       <img src="https://flightrix.com/static/media/flightrixsvg.1702041e614b3caf6221.png" alt="Flightrix Logo" style="height: 60px;">
-        //     </div>
-        //     <h2 style="color: #444;">Account Verification</h2>
-        //     <p>Hello,</p>
-        //     <p>You recently requested to create your Flightrix account. Please click the link below to verify your account:</p>
-        //     <p>
-        //       <a href="https://www.flightrix.com/login" style="color: #1a73e8; text-decoration: none;">Verify your account</a>
-        //     </p>
-        //     <p>If you did not request this, please ignore this email.</p>
-        //     <p>Thank you,<br>The Flightrix Team</p>
-        //   </div>
-        // `,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
@@ -89,18 +70,6 @@ export const createCompany = async (req, res) => {
   }
 };
 // Create a new Company
-
-// Company.controller.js
-// Get all Companys
-// export const getAllCompanys = async (req, res) => {
-//   try {
-//     const Companys = await Company.find();
-//     res.status(200).json(Companys);
-//   } catch (error) {
-//     console.error("Error fetching Companys:", error);
-//     res.status(500).json({ error: "Internal server error" });
-//   }
-// };
 
 export const emailPortal = async (req, res) => {
   try {
@@ -140,9 +109,7 @@ export const getAllCompanys = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
 // Company.controller.js
-
 // Update Company by ID
 export const updateCompanyById = async (req, res) => {
   const { id } = req.params;
@@ -173,16 +140,6 @@ export const getCompanyById = async (req, res, next) => {
   }
 };
 
-// Account Verification
-// Dear Mr. George Okurut,
-
-// You recently requested to verify your Best Option Travels account.
-
-// Click here to verify your email
-
-// Company.controller.js
-
-// Delete Company by ID
 export const deleteCompanyById = async (req, res) => {
   const { id } = req.params;
   try {

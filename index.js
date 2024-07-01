@@ -8,6 +8,7 @@ import pnrRoute from "./routes/pnr.js";
 import bookingRoute from "./routes/booking.js";
 import airportRoute from "./routes/airport.js";
 import airlineRoute from "./routes/airline.js";
+import PaymentRoute from "./routes/payment.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import auth from "./middleware/verifyToken.js";
@@ -50,6 +51,8 @@ app.use("/api/company", companysRoute);
 app.use("/api/booking", auth, bookingRoute);
 app.use("/api/airport", auth, airportRoute);
 app.use("/api/airline", auth, airlineRoute);
+app.use("/api/payment", PaymentRoute);
+// app.use("/api/payment", auth, PaymentRoute);
 
 // router.get("/logout", (req, res) => {
 //   res.clearCookie("token");
