@@ -21,11 +21,11 @@ export const createCompany = async (req, res) => {
 
     // Check if _id exists in req.body to determine if it's an update or create
     if (req.body._id) {
-      const salt = bcrypt.genSaltSync(10);
-      const hash = bcrypt.hashSync(req.body.password, salt);
+      // const salt = bcrypt.genSaltSync(10);
+      // const hash = bcrypt.hashSync(req.body.password, salt);
       companyData = {
         ...companyData,
-        password: hash, // Use the hashed password for update
+        // password: hash, // Use the hashed password for update
       };
       const updatedCompany = await Company.findByIdAndUpdate(
         req.body._id,
