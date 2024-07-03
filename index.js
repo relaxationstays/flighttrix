@@ -12,6 +12,7 @@ import PaymentRoute from "./routes/payment.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import auth from "./middleware/verifyToken.js";
+import bodyParser from "body-parser";
 
 const app = express();
 dotenv.config();
@@ -28,6 +29,9 @@ const connect = async () => {
 mongoose.connection.on("disconnected", () => {
   console.log("mongoDB disconnected!");
 });
+
+app.use(bodyParser.json({ limit: "10mb" }));
+app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 
 app.use(cookieParser());
 app.use(
@@ -58,7 +62,7 @@ app.use("/api/company", companysRoute);
 app.use("/api/booking", auth, bookingRoute);
 app.use("/api/airport", auth, airportRoute);
 app.use("/api/airline", auth, airlineRoute);
-app.use("/api/payment", PaymentRoute);
+app.use("/api/payment",auth, PaymentRoute);
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong!";

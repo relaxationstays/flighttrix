@@ -10,7 +10,7 @@ const router = express.Router();
 //CREATE
 router.post("/", createPayment);
 //UPDATE
-router.put("/:id", updatePayment);
+router.post("/update", updatePayment);
 //DELETE
 //GET
 router.get("/find/:id", getOnePayment);

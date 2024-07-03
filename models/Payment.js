@@ -27,6 +27,16 @@ const PaymentSchema = new mongoose.Schema(
       required: true,
       // unique: true,
     },
+    narration: {
+      type: String,
+      required: true,
+      // unique: true,
+    },
+    bank: {
+      type: String,
+      required: true,
+      // unique: true,
+    },
     amount: {
       type: Number,
       // required: true,
