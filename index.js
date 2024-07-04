@@ -42,7 +42,7 @@ app.use(
       "http://localhost:3001",
       "https://flightrix.com",
       "https://admin.flightrix.com",
-      "https://jolly-mandazi-3b4a00.netlify.app",
+      "https://6686b43b3756a81c55160ecf--tranquil-dragon-a40813.netlify.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -62,7 +62,7 @@ app.use("/api/company", companysRoute);
 app.use("/api/booking", auth, bookingRoute);
 app.use("/api/airport", auth, airportRoute);
 app.use("/api/airline", auth, airlineRoute);
-app.use("/api/payment",auth, PaymentRoute);
+app.use("/api/payment", auth, PaymentRoute);
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong!";
