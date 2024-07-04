@@ -9,6 +9,10 @@ const PNRSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    purchasePrice: {
+      type: String,
+      required: true,
+    },
     infantprice: {
       type: String,
       required: true,
@@ -64,4 +68,3 @@ const PNRSchema = new mongoose.Schema(
 );
 
 export default mongoose.model("PNRModel", PNRSchema);
- 
