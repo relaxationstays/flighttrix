@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+
 // Function to check if the token is expired
 const isTokenExpired = (token) => {
   try {
@@ -24,16 +25,14 @@ const clearCookies = (res) => {
 const auth = (req, res, next) => {
   const token = req.cookies.access_token;
   if (!token) {
-    return res.status(403).json({ msg: "No token, authorization denied" });
+    return res.status(401).json({ msg: "No token, authorization denied" });
   }
 
   if (isTokenExpired(token)) {
     console.log("Session expired. Please log in again.");
     // clearCookies(res);
-    clearCookies(res); // Clear cookies if token verification fails
-    // return res.redirect("/login");
     return res
-      .status(403)
+      .status(401)
       .json({ msg: "Session expired. Please log in again." });
   }
 
@@ -43,7 +42,7 @@ const auth = (req, res, next) => {
     console.log(decoded.user);
     next();
   } catch (err) {
-    res.status(403).json({ msg: "Token is not valid" });
+    res.status(401).json({ msg: "Token is not valid" });
   }
 };
 
