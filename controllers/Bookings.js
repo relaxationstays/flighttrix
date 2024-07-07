@@ -23,7 +23,7 @@ export const createBookings = async (req, res, next) => {
     // Find the PNR by its _id
     const pnrDocument = await PNR.findById(PNRID);
     if (!pnrDocument) {
-      return res.status(404).json({ message: "PNR not found" });
+      return res.status(404).json({ message: "PNR not Found" });
     }
     // Subtract one from the current Seats value
     const updatedSeats = pnrDocument.Seats - 1;
