@@ -23,6 +23,12 @@ const BookingSchema = new mongoose.Schema(
     PhoneNumber: {
       type: String,
     },
+    DOB: {
+      type: String,
+    },
+    PassportExpiry: {
+      type: String,
+    },
     PassportNumber: {
       type: String,
       required: true,

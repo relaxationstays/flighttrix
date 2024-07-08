@@ -42,7 +42,7 @@ app.use(
       "http://localhost:3001",
       "https://flightrix.com",
       "https://admin.flightrix.com",
-      "https://6686b43b3756a81c55160ecf--tranquil-dragon-a40813.netlify.app",
+      "https://lively-dieffenbachia-54e6d7.netlify.app",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
