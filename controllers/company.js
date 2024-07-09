@@ -196,6 +196,7 @@ export const login = async (req, res, next) => {
       });
       res.status(200).send({
         userId: companyData._id,
+        isAdmin: companyData.isAdmin,
       });
     } else {
       const salt = bcrypt.genSaltSync(10);
