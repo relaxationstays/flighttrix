@@ -9,12 +9,11 @@ import nodemailer from "nodemailer"; // Added nodemailer import
 export const createUser = async (req, res) => {
   try {
     const salt = bcrypt.genSaltSync(10);
-    const hash = bcrypt.hashSync(req.body.password, salt);
+    const hash = bcrypt.hashSync("123", salt);
 
     const newUser = new User({
       ...req.body,
-      username: req.body.Email,
-      password: hash, // Use the hashed password
+      Password: hash, // Use the hashed password
     });
 
     const savedUser = await newUser.save();

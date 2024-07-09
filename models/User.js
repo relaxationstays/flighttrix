@@ -1,66 +1,75 @@
 import mongoose from "mongoose";
 const UserSchema = new mongoose.Schema(
   {
-    AgencyName: {
+    Salutation: {
       type: String,
-      required: true,
+      enum: ["Mr.", "Ms", "Mrs"],
+      required: [true, "Please input the agency name!"],
     },
-    Address: {
+    FirstName: {
       type: String,
-      required: true,
+      required: [true, "Please input the first name!"],
     },
-    Website: {
+    LastName: {
       type: String,
-      required: true,
-    },
-    Nationality: {
-      type: String,
-    },
-    city: {
-      type: String,
-      required: true,
-    },
-    Zipcode: {
-      type: String,
-      required: true,
-    },
-    AgentName: {
-      type: String,
-      required: true,
-    },
-    Number: {
-      type: String,
-      default: false,
-    },
-    Telephone: {
-      type: String,
-      default: false,
+      required: [true, "Please input the last name!"],
     },
     Email: {
       type: String,
-      default: false,
-      unique: true,
+      required: [true, "Please input the email!"],
+      match: [/.+\@.+\..+/, "Please fill a valid email address"],
     },
-    Designation: {
-      type: String,
-      default: false,
+    Company: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Company",
+      required: true,
     },
-    Designation: {
+    Rights: {
       type: String,
-      default: false,
+      // enum: ["FullAdmin", "BookingAndReports", "BookOnly", "ReportsOnly"],
+      required: [true, "Please input the city!"],
+    },
+    Notification: {
+      type: String,
+      // enum: ["Email", "Whatsapp", "Sms"],
+      
+    },
+    TelephoneCode: {
+      type: String,
+      // enum: ["", "971", "256"],
+      default: "",
+    },
+    Telephone: {
+      type: String,
+      required: [true, "Please input the telephone number!"],
+    },
+    WhatsappCode: {
+      type: String,
+      // enum: ["", "971", "256"],
+      default: "",
     },
     Whatsapp: {
       type: String,
-      default: false,
-      unique: true,
+      required: [true, "Please input the Whatsapp number!"],
     },
-    password: {
+    Password: {
       type: String,
+    },
+    Status: {
+      type: Boolean,
       default: false,
     },
     isAdmin: {
       type: Boolean,
       default: false,
+    },
+    AciveStatus: {
+      type: Boolean,
+      default: false,
+    },
+    otp: {
+      type: Number,
+      default: 123,
     },
   },
   { timestamps: true }
