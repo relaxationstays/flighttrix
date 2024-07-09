@@ -41,6 +41,7 @@ app.use(
       "http://localhost:3000",
       "http://localhost:3001",
       "https://www.flightrix.com",
+      "https://flightrix.com",
       "https://admin.flightrix.com",
       "https://lively-dieffenbachia-54e6d7.netlify.app",
     ],
