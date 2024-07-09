@@ -105,10 +105,16 @@ export const getBooking = async (req, res, next) => {
 
 export const getBookings = async (req, res, next) => {
   const id = req.user.id;
+  const isAdmin = req.user.isAdmin;
   console.log("user", id);
   try {
-    const rooms = await Bookings.find({ issuer: id }); // Modify query to filter by issuer === id
-    res.status(200).json(rooms);
+    if (isAdmin) {
+      const rooms = await Bookings.find(); // Modify query to filter by issuer === id
+      res.status(200).json(rooms);
+    } else {
+      const rooms = await Bookings.find({ issuer: id }); // Modify query to filter by issuer === id
+      res.status(200).json(rooms);
+    }
   } catch (err) {
     next(err);
   }

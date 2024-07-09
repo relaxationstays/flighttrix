@@ -183,6 +183,7 @@ export const login = async (req, res, next) => {
       const payload = {
         user: {
           id: companyData.id,
+          isAdmin: companyData.isAdmin,
         },
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
