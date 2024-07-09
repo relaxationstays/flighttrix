@@ -104,8 +104,10 @@ export const getBooking = async (req, res, next) => {
 };
 
 export const getBookings = async (req, res, next) => {
+  const id = req.user.id;
+  console.log("user", id);
   try {
-    const rooms = await Bookings.find();
+    const rooms = await Bookings.find({ issuer: id }); // Modify query to filter by issuer === id
     res.status(200).json(rooms);
   } catch (err) {
     next(err);
