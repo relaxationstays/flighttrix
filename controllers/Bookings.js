@@ -1,6 +1,6 @@
 import Bookings from "../models/Bookings.js";
 import { v4 as uuidv4 } from "uuid";
-import Company from "../models/Company.js";
+import User from "../models/User.js";
 
 // import Hotel from "../models/Hotel.js";
 // import { createError } from "../utils/error.js";
@@ -34,14 +34,14 @@ export const createBookings = async (req, res, next) => {
       { new: true } // Return the modified document
     );
 
-    const CompanyDocument = await Company.findById(issuer);
-    if (!CompanyDocument) {
-      return res.status(404).json({ message: "Company not found" });
+    const UserDocument = await User.findById(issuer);
+    if (!UserDocument) {
+      return res.status(404).json({ message: "User not found" });
     }
     // Subtract one from the current Seats value
-    const BalanceUpdate = CompanyDocument.Balance - pnrDocument.price;
+    const BalanceUpdate = UserDocument.Balance - pnrDocument.price;
     // Update the document with the new Seats value
-    const updatedComapny = await Company.findByIdAndUpdate(
+    const updatedComapny = await User.findByIdAndUpdate(
       issuer,
       { $set: { Balance: BalanceUpdate } },
       { new: true } // Return the modified document

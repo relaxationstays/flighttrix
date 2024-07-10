@@ -1,27 +1,31 @@
 import express from "express";
 import {
   createUser,
-  getAllUsers,
+  // getAllUsers,
   updateUserById,
   deleteUserById,
+  getUserById,
   login,
-  emailPortal,
+  getAllUsers,
+  checklogin,
+  setPass,
 } from "../controllers/user.js";
+import auth from "../middleware/verifyToken.js";
 const router = express.Router();
 
 //CREATE
 router.post("/", createUser);
-router.get("/", getAllUsers);
+router.get("/", auth, getAllUsers);
+router.get("/getAll", getAllUsers);
 router.post("/login", login);
+router.post("/checklogin", checklogin);
+router.post("/setPass", setPass);
+router.get("/oneuser", auth, getUserById);
 router.post("/updateUserById", updateUserById);
 router.post("/delete", deleteUserById);
-router.get("/logout", (req, res) => {
-  res.clearCookie("access_token");
-  res.clearCookie("token");
-  res.json({ message: "Logged out" });
-});
 // router.post("/sendmail", emailPortal);
 
 // router.post("/", verifyAdmin, createHotel);
 
 export default router;
+ 

@@ -32,7 +32,6 @@ const UserSchema = new mongoose.Schema(
     Notification: {
       type: String,
       // enum: ["Email", "Whatsapp", "Sms"],
-      
     },
     TelephoneCode: {
       type: String,
@@ -48,13 +47,16 @@ const UserSchema = new mongoose.Schema(
       // enum: ["", "971", "256"],
       default: "",
     },
+    AciveStatus: {
+      type: Boolean,
+      // enum: ["", "971", "256"],
+      default: false,
+    },
     Whatsapp: {
       type: String,
       required: [true, "Please input the Whatsapp number!"],
     },
-    Password: {
-      type: String,
-    },
+   
     Status: {
       type: Boolean,
       default: false,
@@ -66,6 +68,10 @@ const UserSchema = new mongoose.Schema(
     AciveStatus: {
       type: Boolean,
       default: false,
+    },
+    password: {
+      type: String,
+      default: 123,
     },
     otp: {
       type: Number,
