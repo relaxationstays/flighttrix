@@ -22,6 +22,7 @@ const connect = async () => {
     await mongoose.connect(process.env.MONGO);
     console.log("Connected to mongoDB.");
   } catch (error) {
+    console.error("Error connecting to mongoDB:", error);
     throw error;
   }
 };
@@ -36,14 +37,14 @@ app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(cookieParser());
 app.use(
   cors({
-    // origin: "*",
     origin: [
       "http://localhost:3000",
       "http://localhost:3001",
       "https://www.flightrix.com",
       "https://flightrix.com",
       "https://admin.flightrix.com",
-      "https://lively-dieffenbachia-54e6d7.netlify.app",
+      // "https://lively-dieffenbachia-54e6d7.netlify.app",
+      // Add other origins as needed
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
@@ -56,7 +57,7 @@ app.use(
 );
 app.use(express.json());
 
-// app.use("/api/user", authRoute);
+app.use("/api/auth", authRoute);
 app.use("/api/pnr", auth, pnrRoute);
 app.use("/api/user", usersRoute);
 app.use("/api/company", companysRoute);
@@ -64,9 +65,11 @@ app.use("/api/booking", auth, bookingRoute);
 app.use("/api/airport", auth, airportRoute);
 app.use("/api/airline", auth, airlineRoute);
 app.use("/api/payment", auth, PaymentRoute);
+
 app.use((err, req, res, next) => {
   const errorStatus = err.status || 500;
   const errorMessage = err.message || "Something went wrong!";
+  console.error("Error:", err);
   return res.status(errorStatus).json({
     success: false,
     status: errorStatus,
