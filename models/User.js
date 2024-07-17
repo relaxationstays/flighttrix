@@ -52,6 +52,11 @@ const UserSchema = new mongoose.Schema(
       // enum: ["", "971", "256"],
       default: false,
     },
+    SuperAdmin: {
+      type: Boolean,
+      // enum: ["", "971", "256"],
+      default: false,
+    },
     Whatsapp: {
       type: String,
       required: [true, "Please input the Whatsapp number!"],

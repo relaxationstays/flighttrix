@@ -13,6 +13,10 @@ const PNRSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    purchaseInfantPrice: {
+      type: String,
+      required: false,
+    },
     infantprice: {
       type: String,
       required: true,

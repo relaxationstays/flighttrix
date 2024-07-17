@@ -50,8 +50,8 @@ export const createCompany = async (req, res) => {
       const mailOptions = {
         from: "noreply@flightrix.com",
         to: req.body.Email,
-        subject: "Account Verification",
-        text: `Your account is created. \n\n\nFollow link to login. \n\n\nhttps://www.flightrix.com/login`,
+        subject: "Company Account Verification",
+        text: `Your Company Account is created. \n\n\nFollow link to login. \n\n\nhttps://www.flightrix.com/login`,
       };
 
       transporter.sendMail(mailOptions, (error, info) => {
