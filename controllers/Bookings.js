@@ -60,17 +60,47 @@ export const createBookings = async (req, res, next) => {
 };
 
 export const updateBookings = async (req, res, next) => {
+  const { bookingID } = req.params; // Get the booking ID from the request parameters
+  // const { PNR: PNRID, issuer } = req.body;
   try {
-    const updatedBookings = await Bookings.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true }
+    // Find the booking by its ID
+    const bookingDocument = await Bookings.findById(bookingID);
+    if (!bookingDocument) {
+      return res.status(404).json({ message: "Booking not found" });
+    }
+    // Find the PNR by its _id
+    
+  
+    // Update the necessary fields of the booking
+    const updatedBookingData = {
+      ...req.body,
+    
+    };
+    // Update the booking document with the new data
+    const updatedBooking = await Bookings.findByIdAndUpdate(
+      bookingID,
+      { $set: updatedBookingData },
+      { new: true } // Return the modified document
     );
-    res.status(200).json(updatedBookings);
+
+    res.status(200).json(updatedBooking);
   } catch (err) {
     next(err);
   }
 };
+
+// export const updateBookings = async (req, res, next) => {
+//   try {
+//     const updatedBookings = await Bookings.findByIdAndUpdate(
+//       req.params.id,
+//       { $set: req.body },
+//       { new: true }
+//     );
+//     res.status(200).json(updatedBookings);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
 export const deleteBookings = async (req, res, next) => {
   // const hotelId = req.params.id;
   // try {

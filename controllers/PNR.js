@@ -9,18 +9,35 @@ export const createPNR = async (req, res, next) => {
     next(err);
   }
 };
-export const updatePNR = async (req, res, next) => {
+// export const updatePNR = async (req, res, next) => {
+//   try {
+//     const updatedPNR = await PNR.findByIdAndUpdate(
+//       req.params.id,
+//       { $set: req.body },
+//       { new: true }
+//     );
+//     res.status(200).json(updatedPNR);
+//   } catch (err) {
+//     next(err);
+//   }
+// };
+
+
+
+export const updatePNR = async (req, res) => {
+  const { id } = req.params;
   try {
-    const updatedPNR = await PNR.findByIdAndUpdate(
-      req.params.id,
-      { $set: req.body },
-      { new: true }
-    );
-    res.status(200).json(updatedPNR);
-  } catch (err) {
-    next(err);
+    const updatedCompany = await PNR.findByIdAndUpdate(id, req.body, {
+      new: true,
+    });
+    res.status(200).json(updatedCompany);
+  } catch (error) {
+    console.error("Error updating Company:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
+
+
 export const deletePNR = async (req, res, next) => {
   try {
     await PNR.findByIdAndDelete(req.params.id);

@@ -11,7 +11,7 @@ const router = express.Router();
 //CREATE
 router.post("/", createBookings);
 //UPDATE
-router.put("/:id", updateBookings);
+router.put("/:bookingID", updateBookings);
 //DELETE
 router.delete("/:id", deleteBookings);
 //GET

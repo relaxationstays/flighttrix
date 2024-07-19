@@ -54,13 +54,13 @@ export const createCompany = async (req, res) => {
         text: `Your Company Account is created. \n\n\nFollow link to login. \n\n\nhttps://www.flightrix.com/login`,
       };
 
-      transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          console.error("Error sending email:", error);
-          return res.status(500).json({ error: "Failed to send email" });
-        }
-        console.log("Email sent: ", info.response);
-      });
+      // transporter.sendMail(mailOptions, (error, info) => {
+      //   if (error) {
+      //     console.error("Error sending email:", error);
+      //     return res.status(500).json({ error: "Failed to send email" });
+      //   }
+      //   console.log("Email sent: ", info.response);
+      // });
 
       res.status(201).json(savedCompany);
     }
