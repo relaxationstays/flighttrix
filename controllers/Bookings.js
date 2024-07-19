@@ -62,6 +62,7 @@ export const createBookings = async (req, res, next) => {
 export const updateBookings = async (req, res, next) => {
   const { bookingID } = req.params; // Get the booking ID from the request parameters
   // const { PNR: PNRID, issuer } = req.body;
+  const isAdmin = req.user.isAdmin;
   try {
     // Find the booking by its ID
     const bookingDocument = await Bookings.findById(bookingID);
@@ -69,12 +70,15 @@ export const updateBookings = async (req, res, next) => {
       return res.status(404).json({ message: "Booking not found" });
     }
     // Find the PNR by its _id
-    
-  
+    if (!isAdmin) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to update bookings" });
+    }
+
     // Update the necessary fields of the booking
     const updatedBookingData = {
       ...req.body,
-    
     };
     // Update the booking document with the new data
     const updatedBooking = await Bookings.findByIdAndUpdate(
