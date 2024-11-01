@@ -106,7 +106,8 @@ export const createBookings = async (req, res, next) => {
       paymentMode: [],
     };
 
-    console.log("..invoiceData.", invoiceData);
+    // console.log("..invoiceData.", invoiceData);
+    res.status(200).json(savedBookings);
 
     try {
       const response = await axios.post(
@@ -119,7 +120,6 @@ export const createBookings = async (req, res, next) => {
       return res.status(500).json({ message: "Failed to submit invoice" });
     }
     // }
-    res.status(200).json(savedBookings);
   } catch (err) {
     console.error("Error in booking process:", err);
     res.status(500).json({ message: "Booking process failed" });
