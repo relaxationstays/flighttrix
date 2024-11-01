@@ -41,10 +41,10 @@ export const createBookings = async (req, res, next) => {
       { new: true } // Return the modified document
     );
 
-    let UserDocument = await User.findById(issuer);
+    let UserDocument = await User.findById("670fde10e2af9f88d715eaba");
     if (!UserDocument) {
       // return res.status(404).json({ message: "User not found" });
-      UserDocument = await Company.findById(issuer);
+      UserDocument = await Company.findById("670fde10e2af9f88d715eaba");
       if (!UserDocument) {
         return res.status(404).json({ message: "User not found" });
       }
@@ -102,7 +102,7 @@ export const createBookings = async (req, res, next) => {
       tax,
       total: 1500,
       salesperson: "invoiceDetails.salesperson",
-      note: "Booked from fightrix",
+      note: savedBookings._id,
       paymentMode: [],
     };
 
