@@ -41,10 +41,10 @@ export const createBookings = async (req, res, next) => {
       { new: true } // Return the modified document
     );
 
-    let UserDocument = await User.findById("670fde10e2af9f88d715eaba");
+    let UserDocument = await User.findById(issuer);
     if (!UserDocument) {
       // return res.status(404).json({ message: "User not found" });
-      UserDocument = await Company.findById("670fde10e2af9f88d715eaba");
+      UserDocument = await Company.findById(issuer);
       if (!UserDocument) {
         return res.status(404).json({ message: "User not found" });
       }
