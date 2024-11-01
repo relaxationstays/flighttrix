@@ -61,7 +61,6 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: [true, "Please input the Whatsapp number!"],
     },
-   
     Status: {
       type: Boolean,
       default: false,
@@ -81,6 +80,10 @@ const UserSchema = new mongoose.Schema(
     otp: {
       type: Number,
       default: 123,
+    },
+    PostedBy: {
+      // type: Number,
+      type: mongoose.Schema.Types.ObjectId,
     },
   },
   { timestamps: true }

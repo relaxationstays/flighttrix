@@ -15,9 +15,9 @@ import auth from "../middleware/verifyToken.js";
 const router = express.Router();
 
 //CREATE
-router.post("/", createCompany);
+router.post("/", auth, createCompany);
 router.get("/", auth, getAllCompanys);
-router.get("/getAll", getAllCompanys);
+router.get("/getAll", auth, getAllCompanys);
 router.post("/login", login);
 router.post("/checklogin", checklogin);
 router.post("/setPass", setPass);

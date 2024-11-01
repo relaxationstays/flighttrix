@@ -67,6 +67,9 @@ const Companychema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    PostedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+    },
     AciveStatus: {
       type: Boolean,
       default: false,

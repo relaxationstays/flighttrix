@@ -1,11 +1,12 @@
 import Bookings from "../models/Bookings.js";
 import { v4 as uuidv4 } from "uuid";
+import axios from "axios";
 import User from "../models/User.js";
-
 // import Hotel from "../models/Hotel.js";
 // import { createError } from "../utils/error.js";
-
 import PNR from "../models/Pnr.js";
+import Company from "../models/Company.js";
+axios.defaults.withCredentials = true;
 
 const generateRandomNumbers = () => {
   const randomNumbers = Array.from({ length: 4 }, () =>
@@ -15,33 +16,45 @@ const generateRandomNumbers = () => {
 };
 
 export const createBookings = async (req, res, next) => {
+  console.log("Booking now.......");
   // Generate a random 10-character reference
   const uniqueReference = generateRandomNumbers();
   const { PNR: PNRID } = req.body;
-  const { issuer: issuer } = req.body;
+  const { id: issuer } = req.user;
+  const isAdmin = req.user.SuperAdmin;
+  console.log("issuer", issuer);
   try {
+    console.log("Booking nowssssssss.......");
     // Find the PNR by its _id
     const pnrDocument = await PNR.findById(PNRID);
     if (!pnrDocument) {
       return res.status(404).json({ message: "PNR not Found" });
     }
+
     // Subtract one from the current Seats value
     const updatedSeats = pnrDocument.Seats - 1;
-    // Update the document with the new Seats value
-    const updatedPNR = await PNR.findByIdAndUpdate(
+
+    // Update the Seats in the PNR document
+    await PNR.findByIdAndUpdate(
       PNRID,
       { $set: { Seats: updatedSeats } },
       { new: true } // Return the modified document
     );
 
-    const UserDocument = await User.findById(issuer);
+    let UserDocument = await User.findById(issuer);
     if (!UserDocument) {
-      return res.status(404).json({ message: "User not found" });
+      // return res.status(404).json({ message: "User not found" });
+      UserDocument = await Company.findById(issuer);
+      if (!UserDocument) {
+        return res.status(404).json({ message: "User not found" });
+      }
     }
-    // Subtract one from the current Seats value
+
+    console.log("UserDocument", UserDocument);
+
+    // Update user's balance
     const BalanceUpdate = UserDocument.Balance - pnrDocument.price;
-    // Update the document with the new Seats value
-    const updatedComapny = await User.findByIdAndUpdate(
+    await User.findByIdAndUpdate(
       issuer,
       { $set: { Balance: BalanceUpdate } },
       { new: true } // Return the modified document
@@ -53,11 +66,79 @@ export const createBookings = async (req, res, next) => {
       Reference: "A2A-" + uniqueReference,
     });
     const savedBookings = await newBookings.save();
-    res.status(200).json(savedBookings);
+
+    const cust = {
+      name: UserDocument.FirstName + " " + UserDocument.LastName,
+      email: UserDocument.Email,
+      mobile: UserDocument.Telephone,
+    };
+
+    console.log("Booking nowsss.......");
+    console.log("cust", cust);
+
+    // if (savedBookings) {
+    const tax = 0; // Assuming tax is defined; update if dynamic
+    const invoiceDetails = { salesperson: "John Doe" }; // Placeholder for salesperson details
+
+    const invoiceData = {
+      invoiceNumber: Math.floor(100000 + Math.random() * 900000),
+      issuedDate: new Date().toISOString().split("T")[0], // Current timestamp for issued date
+      dueDate: new Date().toISOString().split("T")[0],
+      customer: cust,
+      items: [
+        {
+          name: "A2A | Ticket",
+          price: 1500,
+          firstname: newBookings.FirstName,
+          lastname: newBookings.LastName,
+          nationality: newBookings.Nationality,
+          passport: newBookings.PassportNumber,
+          quantity: 1,
+        },
+      ],
+      subtotal: 1500,
+      balance: 1500,
+      discount: 0,
+      tax,
+      total: 1500,
+      salesperson: "invoiceDetails.salesperson",
+      note: "Booked from fightrix",
+      paymentMode: [],
+    };
+
+    console.log("..invoiceData.", invoiceData);
+
+    try {
+      const response = await axios.post(
+        `https://newcrm-d5pb.onrender.com/api/invoice/flightrix`,
+        invoiceData
+      );
+      console.log("Invoice saved:", response.data);
+    } catch (error) {
+      console.error("Error submitting invoice:", error);
+      return res.status(500).json({ message: "Failed to submit invoice" });
+    }
+    // }
+
+    // res.status(200).json(savedBookings);
   } catch (err) {
+    console.error("Error in booking process:", err);
+    res.status(500).json({ message: "Booking process failed" });
     next(err);
   }
 };
+// export const createBookings = async (req, res, next) => {
+//   try {
+//     const response = await axios.post(
+//       `http://localhost:8801/api/invoice/flightrix`,
+//       { NAME: "GEORGE" }
+//     );
+//     console.log("Invoice saved:", response.data);
+//   } catch (error) {
+//     console.error("Error submitting invoice:", error);
+//     return res.status(500).json({ message: "Failed to submit invoice" });
+//   }
+// };
 
 export const updateBookings = async (req, res, next) => {
   const { bookingID } = req.params; // Get the booking ID from the request parameters
@@ -93,34 +174,8 @@ export const updateBookings = async (req, res, next) => {
   }
 };
 
-// export const updateBookings = async (req, res, next) => {
-//   try {
-//     const updatedBookings = await Bookings.findByIdAndUpdate(
-//       req.params.id,
-//       { $set: req.body },
-//       { new: true }
-//     );
-//     res.status(200).json(updatedBookings);
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-export const deleteBookings = async (req, res, next) => {
-  // const hotelId = req.params.id;
-  // try {
-  //   await Bookings.findByIdAndDelete(req.params.id);
-  //   try {
-  //     await Hotel.findByIdAndUpdate(hotelId, {
-  //       $pull: { Bookingss: req.params.id },
-  //     });
-  //   } catch (err) {
-  //     next(err);
-  //   }
-  //   res.status(200).json("Bookings has been deleted.");
-  // } catch (err) {
-  //   next(err);
-  // }
-};
+export const deleteBookings = async (req, res, next) => {};
+
 export const getBooking = async (req, res, next) => {
   const { id } = req.params;
   console.log("req.params.id:", id);
@@ -139,7 +194,7 @@ export const getBooking = async (req, res, next) => {
 
 export const getBookings = async (req, res, next) => {
   const id = req.user.id;
-  const isAdmin = req.user.isAdmin;
+  const isAdmin = req.user.SuperAdmin;
   console.log("user", id);
   try {
     if (isAdmin) {

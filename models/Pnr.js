@@ -67,6 +67,10 @@ const PNRSchema = new mongoose.Schema(
         required: true,
       },
     },
+    PostedBy: {
+      // type: Number,
+      type: mongoose.Schema.Types.ObjectId,
+    },
   },
   { timestamps: true }
 );

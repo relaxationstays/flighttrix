@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer"; // Added nodemailer import
 export const createUser = async (req, res) => {
+  const Poster = req.user.id;
   try {
     const transporter = nodemailer.createTransport({
       host: "cpanel-just2091.justhost.com",
@@ -13,18 +14,15 @@ export const createUser = async (req, res) => {
         pass: "flixtrixpssxx",
       },
     });
-
     let UserData = {
       ...req.body,
       Username: req.body.Email.toLowerCase(), // Ensure you are setting this correctly
     };
-
     // Check if _id exists in req.body to determine if it's an update or create
     if (req.body._id) {
-      // const salt = bcrypt.genSaltSync(10);
-      // const hash = bcrypt.hashSync(req.body.password, salt);
       UserData = {
         ...UserData,
+        PostedBy: Poster,
         // password: hash, // Use the hashed password for update
       };
       const updatedUser = await User.findByIdAndUpdate(req.body._id, UserData, {
@@ -41,6 +39,7 @@ export const createUser = async (req, res) => {
       // const hash = bcrypt.hashSync(req.body.password, salt);
       UserData = {
         ...UserData,
+        PostedBy: Poster,
       };
       const newUser = new User(UserData);
       const savedUser = await newUser.save();
@@ -70,10 +69,16 @@ export const createUser = async (req, res) => {
 // Create a new User
 
 export const getAllUsers = async (req, res) => {
+  const SuperAdmin = req.user.SuperAdmin;
+  const Picker = req.user.id;
   try {
-    // Fetch all companies but exclude the password field
-    const Users = await User.find().select("-password");
-    res.status(200).json(Users);
+    if (SuperAdmin) {
+      const Users = await User.find().select("-password");
+      res.status(200).json(Users);
+    } else {
+      const Users = await User.find({ PostedBy: Picker }).select("-password");
+      res.status(200).json(Users);
+    }
   } catch (error) {
     console.error("Error fetching Users:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -83,8 +88,13 @@ export const getAllUsers = async (req, res) => {
 // Update User by ID
 export const updateUserById = async (req, res) => {
   const { id } = req.params;
+  const PosterId = req.user.id;
   try {
-    const updatedUser = await User.findByIdAndUpdate(id, req.body, {
+    const data = {
+      ...req.body,
+      PostedBy: PosterId,
+    };
+    const updatedUser = await User.findByIdAndUpdate(id, data, {
       new: true,
     });
     res.status(200).json(updatedUser);
@@ -95,14 +105,15 @@ export const updateUserById = async (req, res) => {
 };
 
 export const getUserById = async (req, res, next) => {
-  const UserId = req.user.id;
-  console.log("req.user.UserId:", UserId);
+  const { id } = req.params;
+  console.log("req.params.id:", id);
   try {
-    const Userid = await User.findById(UserId);
-    if (!Userid) {
-      return res.status(404).json({ message: "User not found" });
+    // Assuming you're using Mongoose, you should search by _id field
+    const AirportData = await User.findById(id);
+    if (!AirportData) {
+      return res.status(404).json({ message: "AirportData not found" });
     }
-    res.status(200).json(User);
+    res.status(200).json(AirportData);
   } catch (err) {
     console.error(err);
     next(err);
@@ -139,6 +150,7 @@ export const login = async (req, res, next) => {
         user: {
           id: UserData.id,
           isAdmin: UserData.isAdmin,
+          SuperAdmin: UserData.SuperAdmin,
         },
       };
       const token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -153,6 +165,7 @@ export const login = async (req, res, next) => {
       res.status(200).send({
         userId: UserData._id,
         isAdmin: UserData.isAdmin,
+        SuperAdmin: UserData.SuperAdmin,
       });
     } else {
       const salt = bcrypt.genSaltSync(10);
@@ -169,7 +182,7 @@ export const login = async (req, res, next) => {
 };
 
 export const setPass = async (req, res, next) => {
-  console.log("reset", req.body.reset);
+  // console.log("reset", req.body.reset);
   const generateRandomNumber = () => {
     const min = 100000; // Minimum 6-digit number
     const max = 999999; // Maximum 6-digit number
@@ -187,8 +200,7 @@ export const setPass = async (req, res, next) => {
       pass: "flixtrixpssxx",
     },
   });
-  console.log("set now mail");
-
+  // console.log("set now mail");
   try {
     const UserData = await User.findOne({ Email: req.body.Email });
     // if (UserData.AciveStatus) {

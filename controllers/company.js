@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import nodemailer from "nodemailer"; // Added nodemailer import
 export const createCompany = async (req, res) => {
+  const id = req.user.id;
   try {
     const transporter = nodemailer.createTransport({
       host: "cpanel-just2091.justhost.com",
@@ -18,15 +19,17 @@ export const createCompany = async (req, res) => {
       ...req.body,
       Companyname: req.body.Email.toLowerCase(), // Ensure you are setting this correctly
     };
-
     // Check if _id exists in req.body to determine if it's an update or create
     if (req.body._id) {
       // const salt = bcrypt.genSaltSync(10);
       // const hash = bcrypt.hashSync(req.body.password, salt);
       companyData = {
         ...companyData,
+        // const companyId = req.user.id;
+        PostedBy: id,
         // password: hash, // Use the hashed password for update
       };
+
       const updatedCompany = await Company.findByIdAndUpdate(
         req.body._id,
         companyData,
@@ -36,7 +39,7 @@ export const createCompany = async (req, res) => {
       if (!updatedCompany) {
         return res.status(404).json({ error: "Company not found" });
       }
-
+      console.log("Upadted", updatedCompany);
       res.status(200).json(updatedCompany);
     } else {
       const salt = bcrypt.genSaltSync(10);
@@ -53,14 +56,6 @@ export const createCompany = async (req, res) => {
         subject: "Company Account Verification",
         text: `Your Company Account is created. \n\n\nFollow link to login. \n\n\nhttps://www.flightrix.com/login`,
       };
-
-      // transporter.sendMail(mailOptions, (error, info) => {
-      //   if (error) {
-      //     console.error("Error sending email:", error);
-      //     return res.status(500).json({ error: "Failed to send email" });
-      //   }
-      //   console.log("Email sent: ", info.response);
-      // });
 
       res.status(201).json(savedCompany);
     }
@@ -100,21 +95,32 @@ export const emailPortal = async (req, res) => {
 };
 
 export const getAllCompanys = async (req, res) => {
+  const id = req.user.id;
+  const SuperAdmin = req.user.SuperAdmin;
   try {
-    // Fetch all companies but exclude the password field
-    const Companys = await Company.find().select("-password");
-    res.status(200).json(Companys);
+    if (SuperAdmin) {
+      const rooms = await Company.find(); // Modify query to filter by issuer === id
+      res.status(200).json(rooms);
+    } else {
+      const rooms = await Company.find(); // Modify query to filter by issuer === id
+      // const rooms = await Company.find({ PostedBy: id }); // Modify query to filter by issuer === id
+      res.status(200).json(rooms);
+    }
   } catch (error) {
     console.error("Error fetching Companys:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
-// Company.controller.js
-// Update Company by ID
 export const updateCompanyById = async (req, res) => {
+  console.log("George Egrpeg");
   const { id } = req.params;
+  const userID = req.user.id;
   try {
-    const updatedCompany = await Company.findByIdAndUpdate(id, req.body, {
+    let companyData = {
+      ...req.body,
+      PostedBy: userID,
+    };
+    const updatedCompany = await Company.findByIdAndUpdate(id, companyData, {
       new: true,
     });
     res.status(200).json(updatedCompany);
@@ -124,21 +130,6 @@ export const updateCompanyById = async (req, res) => {
   }
 };
 
-// export const getCompanyById = async (req, res, next) => {
-//   const { id } = req.params;
-//   console.log("req.params.id:", id);
-//   try {
-//     // Assuming you're using Mongoose, you should search by _id field
-//     const company = await Company.findById(id);
-//     if (!company) {
-//       return res.status(404).json({ message: "company not found" });
-//     }
-//     res.status(200).json(company);
-//   } catch (err) {
-//     console.error(err);
-//     next(err);
-//   }
-// };
 export const getCompanyById = async (req, res, next) => {
   const companyId = req.user.id;
   console.log("req.user.companyId:", companyId);

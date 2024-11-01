@@ -1,7 +1,6 @@
 import PNR from "../models/Pnr.js";
 export const createPNR = async (req, res, next) => {
   const newPNR = new PNR(req.body);
-
   try {
     const savedPNR = await newPNR.save();
     res.status(200).json(savedPNR);
@@ -21,9 +20,6 @@ export const createPNR = async (req, res, next) => {
 //     next(err);
 //   }
 // };
-
-
-
 export const updatePNR = async (req, res) => {
   const { id } = req.params;
   try {

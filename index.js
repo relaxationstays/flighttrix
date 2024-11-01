@@ -62,7 +62,7 @@ app.use("/api/pnr", auth, pnrRoute);
 app.use("/api/user", usersRoute);
 app.use("/api/company", companysRoute);
 app.use("/api/booking", auth, bookingRoute);
-app.use("/api/airport", auth, airportRoute);
+app.use("/api/airport",   airportRoute);
 app.use("/api/airline", auth, airlineRoute);
 app.use("/api/payment", auth, PaymentRoute);
 
