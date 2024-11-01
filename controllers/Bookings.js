@@ -119,8 +119,7 @@ export const createBookings = async (req, res, next) => {
       return res.status(500).json({ message: "Failed to submit invoice" });
     }
     // }
-
-    // res.status(200).json(savedBookings);
+    res.status(200).json(savedBookings);
   } catch (err) {
     console.error("Error in booking process:", err);
     res.status(500).json({ message: "Booking process failed" });
